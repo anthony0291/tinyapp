@@ -31,3 +31,8 @@ app.get("/urls", (request, response) => {
   response.render("urls_index", templateVars);
 });
 
+app.get("/urls/:id", (request, response) => {
+  const templateVars = {id: request.params.id, longURL: "http://www.lighthouselabs".ca};
+  response.render("urls_show", templateVars);
+});
+
