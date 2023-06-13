@@ -54,9 +54,9 @@ app.get("/urls/:id", (request, response) => {
 app.post("/urls", (request, response) => {
   const shortURL = generateRandomString();
   urlDatabase[shortURL] = request.body.longURL;
-  response.redirect(`/urls/${shortURL}`);
-  
   console.log(shortURL), console.log(urlDatabase);
+  response.redirect(`/urls`);
+  
 });
 
 //Redirects from /u/:id to actual site.
@@ -64,25 +64,39 @@ app.get("/u/:id", (req, res) => {
   // console.log(urlDatabase[req.params.id]);
   const longURL = urlDatabase[req.params.id];
   console.log(longURL);
-  res.redirect(`http://${longURL}`);
+  res.redirect(`${longURL}`);
 });
 
 //Delete
 app.post("/urls/:id/delete", (request, res) => {
-  console.log(`Deleted ${urlDatabase[request.params.id]}`);
+  const shortURL = request.params.id;
+  const longURL = urlDatabase[shortURL];
+  
   delete urlDatabase[request.params.id];
+ 
+  console.log(`Deleted: ${shortURL}: ${longURL}`);
   console.log(urlDatabase);
+  
   res.redirect("/urls");
 });
 
+//what I want: when I click on edit in index, it takes me to urls/:specific id
 //Edit
 app.post("/urls/:id/edit", (req, res) => {
-  console.log(`Editing: ${req.params.id} : ${urlDatabase[req.params.id]}`);
-
-  // targets with shortURL and updates longURL
-
+  const shortURL = req.params.id;
+  const longURL = req.body.longURL;
+  
+  urlDatabase[shortURL] = longURL;
+  console.log(`Editing: ${shortURL} : ${longURL}`);
   console.log(urlDatabase);
-  res.redirect("/urls/");
+  res.redirect(`/urls/`);
+});
+
+// Edit-Index-Redirect
+app.post("/urls/:id/redit", (req, res) => {
+  const shortURL = req.params.id;
+  console.log('redirecting...');
+  res.redirect(`/urls/${shortURL}`);
 });
 
 
