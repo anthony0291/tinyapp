@@ -16,91 +16,78 @@ const urlDatabase = {
 
 // ******************************* */
 
+//x
 app.get("/", (req, res) => {
   res.send("Hello!");
 });
 
+//x
 app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
 });
 
-
+//x
 app.get("/hello", (req, res) => {
   res.send("<html><body>Hello <b>World</b></body></html>\n");
 });
 
-
+//Renders: INDEX.ejs
 app.get("/urls", (request, response) => {
   const templateVars = { urls: urlDatabase};
   response.render("urls_index", templateVars);
 });
 
-//
+//Renders: NEW.ejs
 app.get("/urls/new", (req, res) => {
   res.render("urls_new");
 });
 
-
-//
+//Renders: SHOW.ejs
 app.get("/urls/:id", (request, response) => {
   const templateVars = {id: request.params.id, longURL: "http://www.lighthouselabs".ca};
   response.render("urls_show", templateVars);
 });
 
+// ************  MINE  ******************* */
 
-//saves id and longURL to urlDatabase
+//Makes Key(shortURL) : Value(longURL) & adds to urlDatabase
 app.post("/urls", (request, response) => {
-  console.log(request.body); // Log the POST request body to the console
-  console.log("----------");
-  
   const shortURL = generateRandomString();
-  console.log(shortURL);
-  console.log(urlDatabase);
   urlDatabase[shortURL] = request.body.longURL;
-  console.log("----------");
-  console.log(urlDatabase);
-  response.redirect(`/urls/${shortURL}`); // Respond with 'Ok' (we will replace this)
+  response.redirect(`/urls/${shortURL}`);
   
+  console.log(shortURL), console.log(urlDatabase);
 });
-//Receives post from /urls and redirects to /urls/:id
 
-
-
-
-
-//redirect any request from /u/:id to it's actual website
+//Redirects from /u/:id to actual site.
 app.get("/u/:id", (req, res) => {
-  // const longURL = ...
+  // console.log(urlDatabase[req.params.id]);
   const longURL = urlDatabase[req.params.id];
   console.log(longURL);
-  res.redirect(longURL);
+  res.redirect(`http://${longURL}`);
 });
 
-// app.get("/u/:id", (req, res) => {
-//   // const longURL = ...
-//   // const user_id = req.params.user_id;
-//   const newURL = req.body.longURL;
-//   console.log(newURL);
-//   res.redirect(longURL);
-// });
-
-//database.b2xVN2
-
-app.post("/urls/:id/delete", (request, response) => {
+//Delete
+app.post("/urls/:id/delete", (request, res) => {
   console.log(`Deleted ${urlDatabase[request.params.id]}`);
   delete urlDatabase[request.params.id];
   console.log(urlDatabase);
-  response.redirect("/urls");
+  res.redirect("/urls");
 });
 
-app.post("/urls/:id/edit", (request, response) => {
-  console.log(`Editing: ${request.params.id} : ${urlDatabase[request.params.id]}`);
+//Edit
+app.post("/urls/:id/edit", (req, res) => {
+  console.log(`Editing: ${req.params.id} : ${urlDatabase[req.params.id]}`);
+
   // targets with shortURL and updates longURL
 
   console.log(urlDatabase);
-  response.redirect("/urls/");
+  res.redirect("/urls/");
 });
 
+
+
+//Listener
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
