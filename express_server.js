@@ -93,6 +93,7 @@ app.post("/urls/:id/edit", (req, res) => {
 });
 
 // Edit-Index-Redirect
+//Redirects from index-edit button to specific id/show page.
 app.post("/urls/:id/redit", (req, res) => {
   const shortURL = req.params.id;
   console.log('redirecting...');
