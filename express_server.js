@@ -100,7 +100,19 @@ app.post("/urls/:id/redit", (req, res) => {
   res.redirect(`/urls/${shortURL}`);
 });
 
+//Login Route
+//set a cookie named username to value 
+//submitted in the request body via login form
+app.post("/login", (req, res) => {
+  const cookieUser = res.cookie('username',req.body.username);
+  console.log(cookieUser);
+  // console.log(req.body);
+  // console.log(".");
+  res.redirect("/urls");
+});
 
+
+// ************  /MINE  ******************* */
 
 //Listener
 app.listen(PORT, () => {
