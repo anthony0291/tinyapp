@@ -12,17 +12,21 @@
     >
     <span class="navbar-toggler-icon"></span>
   </button>
-  <!-- Login -->
-  <form method="POST" action="/login">
-    <input type="txt" name="username"/>
-    <button type="submit" class="btn btn-primary">Submit</button>
-  </form>
-  <!-- /Login http://localhost:8080/login?username=-->
+  
     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
       <div class="navbar-nav">
         <a class="nav-item nav-link" href="/urls">My URLs</a>
         <a class="nav-item nav-link" href="/urls/new">Create New URL</a>
       </div>
     </div>
+    <!-- Login -->
+    <h4>Login:</h3>
+    <!-- <label for="username">Login:</label> -->
+    <!-- <% if (username) -->
+    <form action="/login" method="POST">
+    <label for="login">Login:</label>
+    <input type="text" id="login" name="username"/>
+    <button type="submit" class="btn btn-primary">Submit</button>
+  </form>
   </nav>
 </header>
