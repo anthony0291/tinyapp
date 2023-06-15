@@ -1,8 +1,14 @@
 const express = require("express");
+const cookieParser = require("cookie-parser");
+const morgan = require("morgan");
 const app = express();
 const PORT = 8080; // default port 8080
-app.set("view engine", "ejs");
+
+
 app.use(express.urlencoded({ extended: true }));
+app.set("view engine", "ejs");
+app.use(cookieParser());
+app.use(morgan('dev'));
 
 // Functions and Storage
 const generateRandomString = function() {
@@ -14,50 +20,62 @@ const urlDatabase = {
   "9sm5xK": "http://www.google.com"
 };
 
-// ******************************* */
+const users = {
+  1: {
+    id: 1,
+    email: 'yabba',
+    password: "dabba"
+  },
+  2: {
+    id: 3,
+    email: 'yabba2',
+    password: "dabba2"
+  },
+  3: {
+    id: 3,
+    email: 'yabba3',
+    password: "dabba3"
+  }
+};
 
-//x
 app.get("/", (req, res) => {
   res.send("Hello!");
 });
 
-//x
 app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
 });
 
-//x
 app.get("/hello", (req, res) => {
   res.send("<html><body>Hello <b>World</b></body></html>\n");
 });
 
-//Renders: INDEX.ejs
-app.get("/urls", (request, response) => {
-  const templateVars = { urls: urlDatabase};
-  response.render("urls_index", templateVars);
+//INDEX.ejs
+app.get("/urls", (req, res) => {
+  const templateVars = { urls: urlDatabase };
+  res.render("urls_index", templateVars);
 });
 
-//Renders: NEW.ejs
+//NEW.ejs
 app.get("/urls/new", (req, res) => {
   res.render("urls_new");
 });
 
-//Renders: SHOW.ejs
-app.get("/urls/:id", (request, response) => {
-  const templateVars = {id: request.params.id, longURL: "http://www.lighthouselabs".ca};
-  response.render("urls_show", templateVars);
+//SHOW.ejs
+app.get("/urls/:id", (req, res) => {
+  const templateVars = {id: req.params.id, longURL: "http://www.lighthouselabs".ca};
+  res.render("urls_show", templateVars);
 });
 
-// ************  MINE  ******************* */
 
-//Makes Key(shortURL) : Value(longURL) & adds to urlDatabase
-app.post("/urls", (request, response) => {
-  const shortURL = generateRandomString();
-  urlDatabase[shortURL] = request.body.longURL;
-  console.log(shortURL), console.log(urlDatabase);
-  response.redirect(`/urls`);
-  
-});
+// app.get("/urls", (req, res) => {
+//   const templateVars = {
+//     users: users[req.cookies('username')]
+//     //...any other vars
+//   };
+//   console.log(templateVars);
+//   res.render("urls_index", templateVars);
+// });
 
 //Redirects from /u/:id to actual site.
 app.get("/u/:id", (req, res) => {
@@ -67,113 +85,57 @@ app.get("/u/:id", (req, res) => {
   res.redirect(`${longURL}`);
 });
 
-//Delete
-app.post("/urls/:id/delete", (request, res) => {
-  const shortURL = request.params.id;
-  const longURL = urlDatabase[shortURL];
-  
-  delete urlDatabase[request.params.id];
- 
-  console.log(`Deleted: ${shortURL}: ${longURL}`);
-  console.log(urlDatabase);
-  
-  res.redirect("/urls");
+// ************  POST  ******************* */
+
+//Makes Key(shortURL) : Value(longURL) & adds to urlDatabase
+app.post("/urls", (req, res) => {
+  const shortURL = generateRandomString();
+  urlDatabase[shortURL] = req.body.longURL;
+  console.log(shortURL), console.log(urlDatabase);
+  res.redirect(`/urls`);
 });
 
-//what I want: when I click on edit in index, it takes me to urls/:specific id
 //Edit
 app.post("/urls/:id/edit", (req, res) => {
   const shortURL = req.params.id;
   const longURL = req.body.longURL;
-  
   urlDatabase[shortURL] = longURL;
   console.log(`Editing: ${shortURL} : ${longURL}`);
   console.log(urlDatabase);
   res.redirect(`/urls/`);
 });
 
-// Edit-Index-Redirect
-//Redirects from index-edit button to specific id/show page.
-app.post("/urls/:id/redit", (req, res) => {
+//Delete
+app.post("/urls/:id/delete", (req, res) => {
   const shortURL = req.params.id;
-  console.log('redirecting...');
-  res.redirect(`/urls/${shortURL}`);
-});
-
-//Login Route
-//set a cookie named username to value 
-//submitted in the request body via login form
-app.post("/login", (req, res) => {
-  const cookieUser = res.cookie('username',req.body.username);
-  console.log(cookieUser);
-  // console.log(req.body);
-  // console.log(".");
+  const longURL = urlDatabase[shortURL];
+  delete urlDatabase[req.params.id];
+  console.log(`Deleted: ${shortURL}: ${longURL}`);
+  console.log(urlDatabase);
   res.redirect("/urls");
 });
 
 
-// ************  /MINE  ******************* */
+//Login
+app.post("/login", (req, res) => {
+  // console.log(req.body);
+  // console.log(req.body.username);
+  const username = req.body.username;
+  res.cookie('username', username);
+  // users[userId] = username;
+  // console.log(users);
+  res.redirect("/urls");
+});
+
+
+app.post('/logout'), (req, res) => {
+  res.clearcookie('username');
+  res.redirect('/urls');
+};
+
 
 //Listener
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
-
-
-
-
-
-
-// const urlDatabase = {
-//     "b2xVn2": "http://www.lighthouselabs.ca",
-//     "9sm5xK": "http://www.google.com"
-// };'
-
-
-
-
-
-// const user1 = {
-//   id: 1,
-//   name: "Pequeno pollo de la pampa",
-//   email: "pock@pock.com",
-//   location: "Pampa",
-// };
-
-// // /users/2
-// const user2 = {
-//   id: 2,
-//   name: "Bob the Bass",
-//   email: "glub@glub.com",
-//   location: "A river near you",
-// };
-
-// const users = {
-//   1: user1,
-//   2: user2,
-// };
-
-// app.get("/", (req, res) => {
-//   return res.send("Request received");
-// });
-
-// // Wildcards!
-// // Placeholder
-
-// const fetchUserById = (userId) => {
-//   if (users[userId]) {
-//     return users[userId];
-//   }
-
-//   return "This is not a valid user id";
-// };
-
-// app.get("/users/:user_id", (req, res) => {
-//   // const user_id = req.params.user_id;
-//   const { user_id } = req.params;
-
-//   console.log(user_id);
-
-//   const currentUser = fetchUserById(user_id);
-//   return res.json(currentUser);
-// });
+//<% include ./partials/_header %>
