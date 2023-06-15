@@ -24,21 +24,16 @@ const urlDatabase = {
 };
 
 const users = {
-  1: {
-    id: 1,
-    email: 'yabba',
-    password: "dabba"
+  userRandomID: {
+    id: "userRandomID",
+    email: "user@example.com",
+    password: "purple-monkey-dinosaur",
   },
-  2: {
-    id: 3,
-    email: 'yabba2',
-    password: "dabba2"
+  user2RandomID: {
+    id: "user2RandomID",
+    email: "user2@example.com",
+    password: "dishwasher-funk",
   },
-  3: {
-    id: 3,
-    email: 'yabba3',
-    password: "dabba3"
-  }
 };
 
 
