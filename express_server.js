@@ -95,6 +95,18 @@ app.get("/urls/:id", (req, res) => {
   res.render("urls_show", templateVars);
 });
 
+//Registration-USer Registration Form
+app.get("/register", (req, res) => {
+  const templateVars = {
+    username: req.cookies['username'],
+  };
+  res.render("urls_registration", templateVars);
+});
+
+
+
+
+
 // L.180 Makes Key(shortURL) : Value(longURL) & adds to urlDatabase
 app.post("/urls", (req, res) => {
   const shortURL = generateRandomString();
