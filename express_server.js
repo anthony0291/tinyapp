@@ -42,6 +42,8 @@ const users = {
 };
 
 
+
+
 /* *** ROUTES *** */
 
 app.get("/", (req, res) => {
@@ -56,37 +58,40 @@ app.get("/urls.json", (req, res) => {
 //L.173  hello_world.ejs
 app.get("/hello", (req, res) => {
   //    ^^^^^^^^ localhost:8080/hello
-  const templateVars = { greeting: "Hello Bob" };
+  const templateVars = {
+    greeting: "Hello Bob",
+    username: req.cookies['username'],
+  };
   //        ^^^ set templateVars to obj with greeting key(go to ejs1)
   res.render("hello_world", templateVars);
   //        (hello_world.ejs, passing in templateVars);
 });
 
+
+//3 INDEX.ejs L.173
 app.get("/urls", (req, res) => {
   const templateVars = {
-    username: req.cookies["username"],
     urls: urlDatabase,
-    // ... any other vars
+    username: req.cookies['username'],
   };
-  console.log(templateVars);
   res.render("urls_index", templateVars);
 });
 
-//3 INDEX.ejs L.173
-// app.get("/urls", (req, res) => {
-//   const templateVars = { urls: urlDatabase };
-//   console.log(templateVars);
-//   res.render("urls_index", templateVars);
-// });
-
 //NEW.ejs L.180: routes should be from most specific to least specific
 app.get("/urls/new", (req, res) => {
-  res.render("urls_new");
+  const templateVars = {
+    username: req.cookies['username'],
+  };
+  res.render("urls_new", templateVars);
 });
 
 //SHOW.ejs L.173
 app.get("/urls/:id", (req, res) => {
-  const templateVars = { id: req.params.id, longURL: urlDatabase[req.params.id]};
+  const templateVars = {
+    id: req.params.id,
+    longURL: urlDatabase[req.params.id],
+    username: req.cookies['username'],
+  };
   res.render("urls_show", templateVars);
 });
 
@@ -142,21 +147,11 @@ app.post("/login", (req, res) => {
   res.redirect("/urls");
 });
 
-//Logout
+// //Logout
 app.post("/logout", (req, res) => {
   res.clearCookie('username');
   res.redirect('/urls');
 });
-
-
-// app.get("/urls", (req, res) => {
-//   const templateVars = {
-//     users: users[req.cookies('username')]
-//     //...any other vars
-//   };
-//   console.log(templateVars);
-//   res.render("urls_index", templateVars);
-// });
 
 
 //Listener
