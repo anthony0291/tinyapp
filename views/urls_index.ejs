@@ -17,7 +17,8 @@
     <title>TinyApp</title>
   </head>
   <body>
-    <%- include ('./partials/_header'); %>
+    
+    <%- include ('./partials/_header') %>
   
     <main style="margin: 1em;">
       <h3>My URLs</h3>
@@ -31,13 +32,14 @@
           </tr>
         </thead>
         <tbody>
+          
           <% for (let id in urls) { %>
             <tr>
               <td><%= id %></td>
               <td><%= urls[id] %></td>
               
               <td>  <!-- R-edit -->
-                <form action="/urls/<%= id %>/redit" method="POST">
+                <form action="/urls/<%= id %>/edit" method="POST">
                   <button type="submit" class="btn btn-secondary">Edit</button>%>
                 </form>
                 </td>
@@ -48,6 +50,7 @@
                 </form>
               </td>
             </tr>
+
           <% } %>
         </tbody>
       </table>
