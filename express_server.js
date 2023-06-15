@@ -1,40 +1,13 @@
 const express = require("express");
 const app = express();
-const cookieParser = require('cookie-parser');
-const morgan = require('morgan');
 const PORT = 8080; // default port 8080
-
-app.use(express.urlencoded({ extended: true }));
-app.use(morgan("dev"));
-app.use(cookieParser());
 app.set("view engine", "ejs");
+app.use(express.urlencoded({ extended: true }));
 
 // Functions and Storage
-const generateRandomString = function () {
-  let result = '';
-  let chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-  for (let i = 6; i > 0; --i) result += chars[Math.floor(Math.random() * chars.length)];
-  return result;
+const generateRandomString = function() {
+  return Math.floor((1 + Math.random()) * 0x10000000).toString(16).substring(1);
 };
-
-const user = {
-  1: {
-    id: 1,
-    email: "user@example.com",
-    password: "purple-monkey-dinosaur"
-  },
-  2: {
-    id: 2,
-    email: "user@example.com",
-    password: "purple-monkey-dinosaur"
-  },
-  3: {
-    id: 2,
-    email: "user@example.com",
-    password: "purple-monkey-dinosaur"
-  },
-};
-
 
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
@@ -74,21 +47,6 @@ app.get("/urls/:id", (request, response) => {
   const templateVars = {id: request.params.id, longURL: "http://www.lighthouselabs".ca};
   response.render("urls_show", templateVars);
 });
-
-// Cookie Parser Example
-// Pass in the username to the urls_index and render it
-app.get("/urls", (req, res) => {
-  const templateVars = {
-    urls: urlDatabase,
-    username: req.cookies["username"],
-  };
-
-  console.log(templateVars);
-  console.log('templateVars');
-  res.render("urls_index", templateVars);
-});
-
-
 
 // ************  MINE  ******************* */
 
@@ -142,27 +100,19 @@ app.post("/urls/:id/redit", (req, res) => {
   res.redirect(`/urls/${shortURL}`);
 });
 
-//>>> Login Route
-//Sets cookie name and value.
+//Login Route
+//set a cookie named username to value 
+//submitted in the request body via login form
 app.post("/login", (req, res) => {
-  console.log(req.body); //vanillaice
-  // console.log(req.body); //{ username: 'vanillaice' }
-  // console.log(user);
-  res.cookie('userId', req.body.username);
+  const cookieUser = res.cookie('username',req.body.username);
+  console.log(cookieUser);
+  // console.log(req.body);
+  // console.log(".");
   res.redirect("/urls");
 });
 
 
-
-
-
-
-
-
-// // ************  /MINE  ******************* */
-
-
-
+// ************  /MINE  ******************* */
 
 //Listener
 app.listen(PORT, () => {

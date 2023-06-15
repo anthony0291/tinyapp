@@ -19,11 +19,9 @@
   },
   "homepage": "https://github.com/bzrkrbddy081/tinyapp#readme",
   "dependencies": {
-    "cookie-parser": "^1.4.6",
     "ejs": "^3.1.9",
     "expres": "0.0.5",
-    "express": "^4.18.2",
-    "morgan": "^1.10.0"
+    "express": "^4.18.2"
   },
   "devDependencies": {
     "nodemon": "^2.0.22"
