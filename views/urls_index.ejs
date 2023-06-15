@@ -37,18 +37,19 @@
             <tr>
               <td><%= id %></td>
               <td><%= urls[id] %></td>
-              
-              <td>  <!-- R-edit -->
-                <form action="/urls/<%= id %>/edit" method="POST">
-                  <button type="submit" class="btn btn-secondary">Edit</button>%>
+
+              <td>  <!-- Edit -->
+                <form method="POST" action="/urls/<%= id %>" >
+                  <button type="submit" class="btn btn-secondary">Edit1</button>
                 </form>
-                </td>
+              </td>
               
               <td> <!-- Delete -->
                 <form method="POST" action="/urls/<%= id %>/delete">
                 <button type="submit" class="btn btn-primary">Delete</button>
                 </form>
               </td>
+            
             </tr>
 
           <% } %>
