@@ -1,14 +1,17 @@
 const express = require("express");
+
 const cookieParser = require("cookie-parser");
 const morgan = require("morgan");
+
 const app = express();
 const PORT = 8080; // default port 8080
 
-
-app.use(express.urlencoded({ extended: true }));
 app.set("view engine", "ejs");
+app.use(express.urlencoded({ extended: true }));
+
 app.use(cookieParser());
 app.use(morgan('dev'));
+
 
 // Functions and Storage
 const generateRandomString = function() {
@@ -42,10 +45,12 @@ app.get("/", (req, res) => {
   res.send("Hello!");
 });
 
+///1
 app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
 });
 
+//2
 app.get("/hello", (req, res) => {
   res.send("<html><body>Hello <b>World</b></body></html>\n");
 });
