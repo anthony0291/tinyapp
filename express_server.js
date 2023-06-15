@@ -62,13 +62,22 @@ app.get("/hello", (req, res) => {
   //        (hello_world.ejs, passing in templateVars);
 });
 
-
-//3 INDEX.ejs L.173
 app.get("/urls", (req, res) => {
-  const templateVars = { urls: urlDatabase };
+  const templateVars = {
+    username: req.cookies["username"],
+    urls: urlDatabase,
+    // ... any other vars
+  };
   console.log(templateVars);
   res.render("urls_index", templateVars);
 });
+
+//3 INDEX.ejs L.173
+// app.get("/urls", (req, res) => {
+//   const templateVars = { urls: urlDatabase };
+//   console.log(templateVars);
+//   res.render("urls_index", templateVars);
+// });
 
 //NEW.ejs L.180: routes should be from most specific to least specific
 app.get("/urls/new", (req, res) => {
@@ -123,24 +132,21 @@ app.post("/urls/:id", (req, res) => {
   res.redirect(`/urls/${shortURL}`);
 });
 
-
-
 //Login
 app.post("/login", (req, res) => {
   // console.log(req.body);
-  // console.log(req.body.username);
+  console.log(req.body.username);
   const username = req.body.username;
   res.cookie('username', username);
-  // users[userId] = username;
-  // console.log(users);
+  console.log(users);
   res.redirect("/urls");
 });
 
-
-app.post('/logout'), (req, res) => {
-  res.clearcookie('username');
+//Logout
+app.post("/logout", (req, res) => {
+  res.clearCookie('username');
   res.redirect('/urls');
-};
+});
 
 
 // app.get("/urls", (req, res) => {
