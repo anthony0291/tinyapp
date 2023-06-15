@@ -6,8 +6,8 @@ const morgan = require("morgan");
 const app = express();
 const PORT = 8080; // default port 8080
 
-app.set("view engine", "ejs"); // Lesson: Template Engine-EJS
-app.use(express.urlencoded({ extended: true }));
+app.set("view engine", "ejs"); // L.173
+app.use(express.urlencoded({ extended: true })); //body-parser L.180
 
 app.use(cookieParser());
 app.use(morgan('dev'));
@@ -41,16 +41,19 @@ const users = {
   }
 };
 
+
+/* *** ROUTES *** */
+
 app.get("/", (req, res) => {
   res.send("Hello!");
 });
 
-///1
+//1
 app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
 });
 
-//(173-hello_world.ejs)
+//L.173  hello_world.ejs
 app.get("/hello", (req, res) => {
   //    ^^^^^^^^ localhost:8080/hello
   const templateVars = { greeting: "Hello Bob" };
@@ -60,52 +63,50 @@ app.get("/hello", (req, res) => {
 });
 
 
-//3 INDEX.ejs (173)
+//3 INDEX.ejs L.173
 app.get("/urls", (req, res) => {
   const templateVars = { urls: urlDatabase };
   console.log(templateVars);
   res.render("urls_index", templateVars);
 });
 
-//NEW.ejs
+//NEW.ejs L.180: routes should be from most specific to least specific
 app.get("/urls/new", (req, res) => {
   res.render("urls_new");
 });
 
-
-
-//SHOW.ejs (Lesson/173)
+//SHOW.ejs L.173
 app.get("/urls/:id", (req, res) => {
   const templateVars = { id: req.params.id, longURL: urlDatabase[req.params.id]};
   res.render("urls_show", templateVars);
 });
 
-
-// app.get("/urls", (req, res) => {
-//   const templateVars = {
-//     users: users[req.cookies('username')]
-//     //...any other vars
-//   };
-//   console.log(templateVars);
-//   res.render("urls_index", templateVars);
-// });
-
-//Redirects from /u/:id to actual site.
-// app.get("/u/:id", (req, res) => {
-//   // console.log(urlDatabase[req.params.id]);
-//   const longURL = urlDatabase[req.params.id];
-//   console.log(longURL);
-//   res.redirect(`${longURL}`);
-// });
-
-// ************  POST  ******************* */
-
-//Makes Key(shortURL) : Value(longURL) & adds to urlDatabase
+// L.180 Makes Key(shortURL) : Value(longURL) & adds to urlDatabase
 app.post("/urls", (req, res) => {
   const shortURL = generateRandomString();
   urlDatabase[shortURL] = req.body.longURL;
   console.log(shortURL), console.log(urlDatabase);
-  res.redirect(`/urls`);
+  res.redirect(`/urls/${shortURL}`);
+});
+
+
+// L.171 Redirects from /u/:id to actual site.
+app.get("/u/:id", (req, res) => {
+  // console.log(urlDatabase[req.params.id]);
+  const longURL = urlDatabase[req.params.id];
+  console.log(longURL);
+  res.redirect(longURL);
+});
+
+//Delete L485
+app.post("/urls/:id/delete", (req, res) => {
+  // const shortURL = req.params.id;
+  // const longURL = urlDatabase[shortURL];
+  // console.log(`Deleted: ${shortURL}: ${longURL}`);
+  console.log(req.params.id);
+  delete urlDatabase[req.params.id];
+  console.log(urlDatabase);
+  res.redirect("/urls");
 });
 
 //Edit
@@ -118,15 +119,7 @@ app.post("/urls/:id/edit", (req, res) => {
   res.redirect(`/urls/`);
 });
 
-//Delete
-app.post("/urls/:id/delete", (req, res) => {
-  const shortURL = req.params.id;
-  const longURL = urlDatabase[shortURL];
-  delete urlDatabase[req.params.id];
-  console.log(`Deleted: ${shortURL}: ${longURL}`);
-  console.log(urlDatabase);
-  res.redirect("/urls");
-});
+
 
 
 //Login
@@ -145,6 +138,16 @@ app.post('/logout'), (req, res) => {
   res.clearcookie('username');
   res.redirect('/urls');
 };
+
+
+// app.get("/urls", (req, res) => {
+//   const templateVars = {
+//     users: users[req.cookies('username')]
+//     //...any other vars
+//   };
+//   console.log(templateVars);
+//   res.render("urls_index", templateVars);
+// });
 
 
 //Listener
