@@ -38,7 +38,6 @@ const users = {
 
 
 
-
 /* *** ROUTES *** */
 
 app.get("/", (req, res) => {
@@ -49,25 +48,29 @@ app.get("/", (req, res) => {
 app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
 });
+// let templateVars = {
+//   user: users[req.cookie["user_id"]],
+// };
 
 //L.173  hello_world.ejs
 app.get("/hello", (req, res) => {
   //    ^^^^^^^^ localhost:8080/hello
+  const userObject = users[req.cookies.userId];
   const templateVars = {
-    greeting: "Hello Bob",
-    username: req.cookies['username'],
+    greeting: "hey bob",
+    userId: userObject,
   };
+  
   //        ^^^ set templateVars to obj with greeting key(go to ejs1)
   res.render("hello_world", templateVars);
   //        (hello_world.ejs, passing in templateVars);
 });
 
-
 //3 INDEX.ejs L.173
 app.get("/urls", (req, res) => {
   const templateVars = {
     urls: urlDatabase,
-    username: req.cookies['username'],
+    userId: users[req.cookies.userId],
   };
   res.render("urls_index", templateVars);
 });
@@ -75,7 +78,7 @@ app.get("/urls", (req, res) => {
 //NEW.ejs L.180: routes should be from most specific to least specific
 app.get("/urls/new", (req, res) => {
   const templateVars = {
-    username: req.cookies['username'],
+    userId: users[req.cookies.userId],
   };
   res.render("urls_new", templateVars);
 });
@@ -85,7 +88,7 @@ app.get("/urls/:id", (req, res) => {
   const templateVars = {
     id: req.params.id,
     longURL: urlDatabase[req.params.id],
-    username: req.cookies['username'],
+    userId: users[req.cookies.userId],
   };
   res.render("urls_show", templateVars);
 });
@@ -93,10 +96,11 @@ app.get("/urls/:id", (req, res) => {
 //Registration-USer Registration Form
 app.get("/register", (req, res) => {
   const templateVars = {
-    username: req.cookies['username'],
+    userId: users[req.cookies.userId],
   };
   res.render("urls_registration", templateVars);
 });
+
 
 
 
@@ -147,18 +151,38 @@ app.post("/urls/:id", (req, res) => {
 //Login
 app.post("/login", (req, res) => {
   // console.log(req.body);
-  console.log(req.body.username);
-  const username = req.body.username;
-  res.cookie('username', username);
-  console.log(users);
+  console.log(req.body.userId);
+  const userId = req.body.userId;
+  res.cookie("userId", userId);
+  console.log(userId);
   res.redirect("/urls");
 });
 
-// //Logout
+//Logout
 app.post("/logout", (req, res) => {
-  res.clearCookie('username');
+  res.clearCookie('userId');
   res.redirect('/urls');
 });
+
+//Register
+app.post("/register", (req, res) => {
+  const email = req.body.email;
+  const password = req.body.password;
+  const userId = generateRandomString();
+ 
+  users[userId] = {
+    id: userId,
+    email: email,
+    password: password,
+  };
+  console.log(users);
+  res.cookie("userId", users[userId].id);
+  console.log(users[userId]);
+  res.redirect("/urls");
+});
+
+
+
 
 
 //Listener

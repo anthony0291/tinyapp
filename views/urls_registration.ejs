@@ -14,19 +14,27 @@
   <body>
     <%- include ('./partials/_header') %>
 
-    <!-- Email Form -->
-    <form method="POST" action="/register">Email
-    <input 
-    type="email"
-    name="email"/>
+    <form method="POST" action="/register">
+    <div><label for="email">Email</label>
+      <input 
+      type="email"
+      name="email"
+      class="form-control"
+      style="width: 300px; margin: 1em"/>
+    </div>
+    <div>
+      <label for="password">Password</label>
+      <input 
+      type="password"
+      name="password"
+      class="form-control"
+      style="width: 300px; margin: 1em"/>
+    </div>
+      <button type="submit" class="btn btn-primary">Register</button>
     </form>
-
-    <!-- Password Form -->
-    <form method="POST" action="/register">Password</form>
-    <input 
-    type="password"
-    name="password"/>
-    </form>
+    
+  
+    
 
 
 
