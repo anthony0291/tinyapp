@@ -34,6 +34,12 @@ const users = {
     email: "user2@example.com",
     password: "dishwasher-funk",
   },
+
+  anthony: {
+    id: 'anthony',
+    email: 'anthony@gmail.com',
+    password: '123',
+  },
 };
 
 const emailHasUser = (email, users) => {
@@ -43,15 +49,15 @@ const emailHasUser = (email, users) => {
     }
   }
   return false;
-}
+};
 
-const emailId = (email, users) => {
-  for (let user in users) {
-    if (users[user].email === email) {
-      return users[user].id;
-    }
-  }
-}
+// const emailId = (email, users) => {
+//   for (let user in users) {
+//     if (users[user].email === email) {
+//       return users[user].id;
+//     }
+//   }
+// }
 
 
 /* *** ROUTES *** */
@@ -117,6 +123,12 @@ app.get("/register", (req, res) => {
   res.render("urls_registration", templateVars);
 });
 
+app.get("/login", (req, res) => {
+  const templateVars = {
+    userId: users[req.cookies.userId],
+  };
+  res.render("urls_login", templateVars);
+});
 
 
 
@@ -166,12 +178,25 @@ app.post("/urls/:id", (req, res) => {
 
 //Login
 app.post("/login", (req, res) => {
-  // console.log(req.body);
-  console.log(req.body.userId);
-  const userId = req.body.userId;
-  res.cookie("userId", userId);
-  console.log(userId);
-  res.redirect("/urls");
+  // // console.log(req.body);
+  // console.log(req.body.userId);
+  // const userId = req.body.userId;
+  // res.cookie("userId", userId);
+  // console.log(userId);
+  // res.redirect("/urls");
+  const email = req.body.email;
+  const password = req.body.password;
+
+  for (let userId in users) {
+    console.log(users[userId]);
+    if (users[userId].email === email) {
+      if (users[userId].password === password) {
+        res.cookie("userId", userId);
+        return res.redirect('/urls');
+      }
+    }
+  }
+  res.send("You have misinputted your email and/or password")
 });
 
 //Logout
