@@ -36,6 +36,22 @@ const users = {
   },
 };
 
+const emailHasUser = (email, users) => {
+  for (let user in users) {
+    if (users[user].email === email) {
+      return true;
+    }
+  }
+  return false;
+}
+
+const emailId = (email, users) => {
+  for (let user in users) {
+    if (users[user].email === email) {
+      return users[user].id;
+    }
+  }
+}
 
 
 /* *** ROUTES *** */
@@ -164,21 +180,31 @@ app.post("/logout", (req, res) => {
   res.redirect('/urls');
 });
 
+
+
 //Register
 app.post("/register", (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
-  const userId = generateRandomString();
- 
-  users[userId] = {
-    id: userId,
-    email: email,
-    password: password,
-  };
-  console.log(users);
-  res.cookie("userId", users[userId].id);
-  console.log(users[userId]);
-  res.redirect("/urls");
+
+  if (!email || !password) {
+    res.status(400).send("Oops, credentials are incorrect1");
+  } else if (emailHasUser(email, users)) {
+    res.status(400).send("This email already has an account.");
+  } else {
+    const userId = generateRandomString();
+    
+    users[userId] = {
+      id: userId,
+      email: email,
+      password: password,
+    };
+    
+    console.log(users);
+    res.cookie("userId", users[userId].id);
+    console.log(users[userId]);
+    res.redirect("/urls");
+  }
 });
 
 
