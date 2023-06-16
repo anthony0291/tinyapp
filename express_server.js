@@ -59,6 +59,13 @@ const emailHasUser = (email, users) => {
 //   }
 // }
 
+const userLoggedIn = (userId, users) => {
+  for (const user in users) {
+    if (userId === user) {
+      return true;
+    }
+  } return false;
+};
 
 /* *** ROUTES *** */
 
@@ -98,12 +105,24 @@ app.get("/urls", (req, res) => {
 });
 
 //NEW.ejs L.180: routes should be from most specific to least specific
+// app.get("/urls/new", (req, res) => {
+//   const templateVars = {
+//     userId: users[req.cookies.userId],
+//   };
+//   res.render("urls_new", templateVars);
+// });
+
 app.get("/urls/new", (req, res) => {
-  const templateVars = {
-    userId: users[req.cookies.userId],
-  };
-  res.render("urls_new", templateVars);
+  if ((userLoggedIn(req.cookies.userId, users)) === false) {
+    res.redirect("/login");
+  } else {
+    const templateVars = {
+      userId: users[req.cookies.userId],
+    };
+    res.render("urls_new", templateVars);
+  }
 });
+
 
 //SHOW.ejs L.173
 app.get("/urls/:id", (req, res) => {
@@ -117,38 +136,51 @@ app.get("/urls/:id", (req, res) => {
 
 //Registration-USer Registration Form
 app.get("/register", (req, res) => {
-  const templateVars = {
-    userId: users[req.cookies.userId],
-  };
-  res.render("urls_registration", templateVars);
+  if (userLoggedIn(req.cookies.userId, users)) {
+    res.redirect("/urls");
+  } else {
+    const templateVars = {
+      userId: users[req.cookies.userId],
+    };
+    res.render("urls_registration", templateVars);
+  }
 });
 
 app.get("/login", (req, res) => {
-  const templateVars = {
-    userId: users[req.cookies.userId],
-  };
-  res.render("urls_login", templateVars);
+  if (userLoggedIn(req.cookies.userId, users)) {
+    res.redirect("/urls");
+  } else {
+    const templateVars = {
+      userId: users[req.cookies.userId],
+    };
+    res.render("urls_login", templateVars);
+  }
 });
-
-
 
 
 
 // L.180 Makes Key(shortURL) : Value(longURL) & adds to urlDatabase
 app.post("/urls", (req, res) => {
-  const shortURL = generateRandomString();
-  urlDatabase[shortURL] = req.body.longURL;
-  console.log(shortURL), console.log(urlDatabase);
-  res.redirect(`/urls/${shortURL}`);
+  if ((userLoggedIn(req.cookies.userId, users)) === false) {
+    res.status(400).send("Sorry, you don't have permission to do this.");
+  } else {
+    const shortURL = generateRandomString();
+    urlDatabase[shortURL] = req.body.longURL;
+    console.log(shortURL), console.log(urlDatabase);
+    res.redirect(`/urls/${shortURL}`);
+  }
 });
-
 
 // L.171 Redirects from /u/:id to actual site.
 app.get("/u/:id", (req, res) => {
-  // console.log(urlDatabase[req.params.id]);
-  const longURL = urlDatabase[req.params.id];
-  console.log(longURL);
-  res.redirect(longURL);
+  console.log(urlDatabase[req.params]);
+  if (urlDatabase[req.params.id] === undefined) {
+    res.status(400).send("Sorry, we can't find that page in our records");
+  } else {
+    const longURL = urlDatabase[req.params.id];
+    console.log(longURL);
+    res.redirect(longURL);
+  }
 });
 
 //Delete L485
