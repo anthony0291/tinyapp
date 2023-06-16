@@ -12,21 +12,17 @@
     >
     <span class="navbar-toggler-icon"></span>
   </button>
-
-
   <% if (userId) {%>
     <form method="POST" name="userId" action="/logout">
       Logged In As: <%= userId.id %></span>
     <button type="submit" class="btn btn-secondary">Logout</button>
     </form>
-
-  <% } else { %>
+    <% } else { %>
     <div>
       <a class="nav-item nav-link" href="/login">Login</a>
       <a class="nav-item nav-link" href="/register">Register</a>
     </div>
     <% } %>
-
     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
       <div class="navbar-nav">
         <a class="nav-item nav-link" href="/urls">My URLs</a>
