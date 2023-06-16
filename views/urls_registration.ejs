@@ -13,12 +13,13 @@
 
   <body>
     <%- include ('./partials/_header') %>
-
+    <h2>Create an Account</h2>
     <form method="POST" action="/register">
     <div><label for="email">Email</label>
       <input 
       type="email"
       name="email"
+      placeholder="Enter email"
       class="form-control"
       style="width: 300px; margin: 1em"/>
     </div>
@@ -27,6 +28,7 @@
       <input 
       type="password"
       name="password"
+      placeholder="Password"
       class="form-control"
       style="width: 300px; margin: 1em"/>
     </div>

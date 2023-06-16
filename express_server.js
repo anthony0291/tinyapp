@@ -192,17 +192,18 @@ app.post("/login", (req, res) => {
     if (users[userId].email === email) {
       if (users[userId].password === password) {
         res.cookie("userId", userId);
+        console.log(res.cookie("userId", userId));
         return res.redirect('/urls');
       }
     }
   }
-  res.send("You have misinputted your email and/or password")
+  res.status(400).send("You have misinputted your email and/or password");
 });
 
 //Logout
 app.post("/logout", (req, res) => {
   res.clearCookie('userId');
-  res.redirect('/urls');
+  res.redirect('/login');
 });
 
 
