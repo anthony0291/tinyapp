@@ -31,12 +31,19 @@
           </tr>
         </thead>
         <tbody>
-          
-          <% for (let id in urls) { %>
-            <tr>
-              <td><%= id %></td>
-              <td><%= urls[id] %></td>
-
+          <% if (!userId) { %>
+            <div class="alert alert-warning" role="alert">
+              Please <a href="/login" class="alert-link">login</a> or <a href="/register" class="alert-link">register</a> to view urls.
+            </div>
+            <% } else { %> 
+              <% for (let id in urls) { %>
+                <tr>
+                  <td><%= id %></td>
+                  <td><%= urls[id].longURL %></td>
+                  
+                  <!-- //form tag: attributes(action:which URL to submit to), method(POST)
+                  button tag has type="submit"
+                input tag: attribute:name: identifies data into "body" of POST -->
               <td>
                 <form method="POST" action="/urls/<%= id %>" >
                   <button type="submit" class="btn btn-secondary">Edit</button>
@@ -50,7 +57,7 @@
               </td>
             
             </tr>
-
+            <% } %>
           <% } %>
         </tbody>
       </table>

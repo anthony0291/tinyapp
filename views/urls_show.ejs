@@ -8,25 +8,35 @@
       integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS"
       crossorigin="anonymous"
     />
-    <title>URL - TinyApp Example</title>
+    <title>TinyApp Show</title>
   </head>
-
   <body>
-    <%- include ('./partials/_header'); %>
+    <%- include ('./partials/_header') %>
     <div class="card text-center">
       <div class="card-header"></div>
       <div class="card-body">
+        
+        <% if (!userId) { %>
+          <div class="alert alert-warning" role="alert">
+            Please <a href="/login" class="alert-link">login</a> or <a href="/register" class="alert-link">register</a> to view urls.
+        </div>
+
+        <% } else if (user !== userURL) { %>
+          <div class="alert alert-warning" role="alert">
+              This link isn't in your collection.
+          </div>
+        <% } %>
+
         <h5 class="card-title">TinyURL for: <%= longURL %></h5>
         <p class="card-text">
           Short URL ID: <a href="/u/<%= id %>"><%= id %></a>
         </p>
       </div>
-
       <div>
         <form method="POST" action="/urls/<%= id %>/edit"><h3>Edit</h3>
         <input 
         type="text"
-        name="longURL"
+        name="newURL"
         placeholder="http://"/>
         <button type="submit" class="btn btn-primary">Submit</button>
       </form>
