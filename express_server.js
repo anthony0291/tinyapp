@@ -12,7 +12,7 @@ app.use(morgan('dev'));
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieSession({
   name: 'session',
-  keys: ['welcome', 'to', 'the', 'hotel', 'California'],
+  keys: ['Welcome', 'to', 'the', 'hotel', 'California'],
 
   maxAge: 24 * 60 * 60 * 1000
 }));
@@ -41,7 +41,7 @@ const users = {
   "anthony": {
     id: 'anthony',
     email: 'anthony@gmail.com',
-    password: '123',
+    password: '123'
   },
 };
 const { generateRandomString, getUserByEmail, urlsForUser, userIsLoggedIn,cookieUserMatch } = require("./helpers");
@@ -91,18 +91,15 @@ app.get("/urls/:id", (req, res) => {
       user: users[req.session.userId].id,
       userURL: urlDatabase[req.params.id].userId,
     };
-    console.log(templateVars.userId);
-    console.log(templateVars.userURL);
     res.render("urls_show", templateVars);
   } else {
-    res.send("Your URLS don't match");
+    res.send("Your URLS do not match");
   }
   
 });
 
 //ShortURL
 app.post("/urls", (req, res) => {
-  console.log("/urls");
   if (req.session.userId) {
     const shortURL = generateRandomString();
     const longURL = req.body.longURL;
@@ -111,7 +108,6 @@ app.post("/urls", (req, res) => {
       userId: req.session.userId,
     };
     res.redirect("/urls");
-    // res.redirect(`/urls/${shortURL}`);
   } else {
     res.send("Sorry, you can't do that right now");
   }
@@ -166,7 +162,6 @@ app.post("/urls/:id", (req, res) => {
 app.post('/login', (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
-
   if (!email || !password) {
     return res.status(400).send('Please provide an email AND a password');
   }
@@ -184,7 +179,6 @@ app.post('/login', (req, res) => {
     return res.status(400).send('Passwords do not match');
   }
   req.session.userId = foundUser.id;
-  console.log(foundUser.id);
   res.redirect('/urls');
 });
 
@@ -236,8 +230,6 @@ app.post("/register", (req, res) => {
       email: email,
       password: newPass,
     };
-
-    console.log(users);
     req.session.userId = users[userId].id;
     console.log(users[userId]);
     return res.redirect("/urls");
