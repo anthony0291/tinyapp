@@ -28,23 +28,23 @@ const urlDatabase = {
   },
 };
 const users = {
-  userRandomID: {
+  "userRandomID": {
     id: "userRandomID",
     email: "user@example.com",
-    password: "purple-monkey-dinosaur",
+    password: "purple-monkey-dinosaur"
   },
-  user2RandomID: {
+  "user2RandomID": {
     id: "user2RandomID",
     email: "user2@example.com",
-    password: "dishwasher-funk",
+    password: "dishwasher-funk"
   },
-  anthony: {
+  "anthony": {
     id: 'anthony',
     email: 'anthony@gmail.com',
     password: '123',
   },
 };
-const { generateRandomString, emailUserMatch, urlsForUser, userIsLoggedIn,cookieUserMatch } = require("./helpers");
+const { generateRandomString, getUserByEmail, urlsForUser, userIsLoggedIn,cookieUserMatch } = require("./helpers");
 
 //**Routes **//
 app.get("/", (req, res) => {
@@ -225,7 +225,7 @@ app.post("/register", (req, res) => {
 
   if (!email || !password) {
     return res.status(400).send("Oops, credentials are incorrect1");
-  } else if (emailUserMatch(email, users)) {
+  } else if (getUserByEmail(email, users)) {
     return res.status(400).send("This email already has an account.");
   } else {
     const userId = generateRandomString();

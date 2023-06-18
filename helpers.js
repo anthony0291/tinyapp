@@ -1,10 +1,10 @@
 const generateRandomString = function() {
   return Math.floor((1 + Math.random()) * 0x10000000).toString(16).substring(1);
 };
-const emailUserMatch = (email, users) => {
+const getUserByEmail = (email, users) => {
   for (let user in users) {
     if (users[user].email === email) {
-      return true;
+      return users[user].id;
     }
   }
   return false;
@@ -37,7 +37,7 @@ const cookieUserMatch = function(cookie, userDatabase) {
 
 module.exports = {
   generateRandomString,
-  emailUserMatch,
+  getUserByEmail,
   urlsForUser,
   userIsLoggedIn,
   cookieUserMatch,
