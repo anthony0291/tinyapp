@@ -3,6 +3,14 @@ const cookieParser = require("cookie-parser");
 const morgan = require("morgan");
 const PORT = 8080;
 
+const bcrypt = require("bcryptjs");
+const password = "purple-monkey-dinosaur"; // found in the req.body object
+
+// const salt = bcrypt.genSaltSync(10);
+// const hashedPassword = bcrypt.hashSync(password, salt);
+
+// const results = bcrypt.compareSync(password, hashedPassword);
+
 const app = express();
 app.set("view engine", "ejs");
 app.use(express.urlencoded({ extended: true }));
@@ -10,10 +18,6 @@ app.use(morgan('dev'));
 app.use(cookieParser());
 
 // Functions and Storage
-// const urlDatabase = {
-//   "b2xVn2": "http://www.lighthouselabs.ca",
-//   "9sm5xK": "http://www.google.com"
-// };
 
 const urlDatabase = {
   b6UTxQ: {
@@ -201,26 +205,45 @@ app.post("/urls/:id", (req, res) => {
 
 
 
-
-
-
 //Post: login
-app.post("/login", (req, res) => {
+app.post('/login', (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
 
-  for (let userId in users) {
-    console.log(users[userId]);
-    if (users[userId].email === email) {
-      if (users[userId].password === password) {
-        res.cookie("userId", userId);
-        console.log(res.cookie("userId", userId));
-        return res.redirect('/urls');
-      }
+  if (!email || !password) {
+    return res.status(400).send('Please provide an email AND a password');
+  }
+  let foundUser = null;
+  for (const userId in users) {
+    const user = users[userId];
+    if (user.email === email) {
+      foundUser = user;
     }
   }
-  return res.status(400).send("You have misinputted your email and/or password");
+  if (!foundUser) {
+    return res.status(400).send('No user with this email');
+  }
+  if (!bcrypt.compareSync(password, foundUser.password)) {
+    return res.status(400).send('Passwords do not match');
+  }
+  
+  res.cookie("userId", foundUser.id);
+  console.log(foundUser.id);
+  res.redirect('/urls');
 });
+
+//GET: login.ejs
+app.get("/login", (req, res) => {
+  if (cookieUserMatch(req.cookies.userId, users)) {
+    res.redirect("/urls");
+  } else {
+    const templateVars = {
+      userId: users[req.cookies.userId],
+    };
+    res.render("urls_login", templateVars);
+  }
+});
+
 
 //Post: logout
 app.post("/logout", (req, res) => {
@@ -252,10 +275,12 @@ app.post("/register", (req, res) => {
     return res.status(400).send("This email already has an account.");
   } else {
     const userId = generateRandomString();
+    const salt = bcrypt.genSaltSync(10);
+    const newPass = bcrypt.hashSync(password, salt);
     users[userId] = {
       id: userId,
       email: email,
-      password: password,
+      password: newPass,
     };
 
     console.log(users);
@@ -265,17 +290,7 @@ app.post("/register", (req, res) => {
   }
 });
 
-//GET: login.ejs
-app.get("/login", (req, res) => {
-  if (cookieUserMatch(req.cookies.userId, users)) {
-    res.redirect("/urls");
-  } else {
-    const templateVars = {
-      userId: users[req.cookies.userId],
-    };
-    res.render("urls_login", templateVars);
-  }
-});
+
 
 
 //Listener
